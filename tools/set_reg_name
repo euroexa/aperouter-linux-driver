@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+##
+## This file is part of the APErouter tools stack.
+## Copyright (C) 2017 INFN APE Lab.
+##
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+##
+
+import json
+from sys import exit
+from os import system
+import argparse
+
+import ape_utils
+
+json_regs = "../../ExaNIP/registers.txt"
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--register-txt", nargs=1, help="register definition file (default {})".format(json_regs))
+parser.add_argument("-s", "--set", nargs=2, action="append", required=True, metavar=("name","value"), help="name/value pair (can be used multiple times)")
+args = parser.parse_args()
+
+
+if args.register_txt:
+    json_regs = args.register_txt[0]
+
+with open(json_regs, "r") as f:
+        registers = json.load(f)
+
+reg_dict = {val["name"]: key for (key, val) in registers.items()}
+
+
+for i in range(len(args.set)):
+        name, value = args.set[i]
+        try:
+                num = reg_dict[name]
+        except:
+                print("Register '{}' not found".format(name))
+                continue
+        system("./set_reg {} {}".format(num, value))
