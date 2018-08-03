@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# KARMA environment setup
+# KARMA environment setup on Roma Trenz boards
 export KARMA=$(pwd)
 
 export KARMA_TOPO="allnodes"
